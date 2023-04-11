@@ -1,6 +1,6 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
-namespace Backend.Extensions;
+namespace MinimalApi.Extensions;
 
 internal static class WebApplicationBuilderExtensions
 {
@@ -38,6 +38,8 @@ internal static class WebApplicationBuilderExtensions
         var openAIClient = new OpenAIClient(
             new Uri($"https://{azureOpenaiService}.openai.azure.com"), azureCredential);
 
+        builder.Services.AddSingleton(openAIClient);
+
         // Semantic Kernel doesn't support Azure AAD credential for now
         // so we implement our own text completion backend
         var openAIService = new AzureOpenAITextCompletionService(
@@ -49,6 +51,19 @@ internal static class WebApplicationBuilderExtensions
         builder.Services.AddSingleton(
             new RetrieveThenReadApproachService(searchClient, kernel));
         builder.Services.AddSingleton(new ReadRetrieveReadChatService(searchClient, kernel));
+
+        return builder;
+    }
+    
+    internal static WebApplicationBuilder AddCrossOriginResourceSharing(this WebApplicationBuilder builder)
+    {
+        builder.Services.AddCors(
+            options =>
+                options.AddDefaultPolicy(
+                    policy =>
+                        policy.AllowAnyOrigin()
+                            .AllowAnyHeader()
+                            .AllowAnyMethod()));
 
         return builder;
     }
