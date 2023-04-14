@@ -2,10 +2,11 @@
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
+var backendUri = builder.Configuration["BACKEND_URI"] ?? "https://localhost:7181";
 builder.Services.AddScoped(
     sp => new HttpClient
     {
-        BaseAddress = new Uri("https://localhost:7181")
+        BaseAddress = new Uri(backendUri)
     });
 
 builder.Services.AddHttpClient();
