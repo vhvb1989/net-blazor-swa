@@ -89,7 +89,7 @@ internal static class WebApplicationExtensions
     }
 
     private static async Task<IResult> OnPostAskAsync(
-        AskRequest request, RetrieveThenReadApproachService rtr, ReadRetrieveReadApproachService rrr)
+        AskRequest request, RetrieveThenReadApproachService rtr, ReadRetrieveReadApproachService rrr, ReadDecomposeAskApproachService rda)
     {
         if (request is { Question.Length: > 0 })
         {            
@@ -98,9 +98,14 @@ internal static class WebApplicationExtensions
                 var reply = await rrr.ReplyAsync(request.Question, request.Overrides);
                 return TypedResults.Ok(reply);
             }
-            else
+            else if (request.Approach == "rtr")
             {
                 var reply = await rtr.ReplyAsync(request.Question);
+                return TypedResults.Ok(reply);
+            }
+            else if (request.Approach == "rda")
+            {
+                var reply = await rda.ReplyAsync(request.Question, request.Overrides);
                 return TypedResults.Ok(reply);
             }
         }
