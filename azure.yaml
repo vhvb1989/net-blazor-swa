@@ -7,6 +7,12 @@ services:
   frontend:
     project: ./app/frontend
     host: staticwebapp
+    hooks:
+      predeploy:
+        shell: pwsh
+        run: dotnet publish
+        continueOnError: false
+        interactive: true
   backend:
     project: ./app/backend
     host: appservice
